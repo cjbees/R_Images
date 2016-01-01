@@ -62,5 +62,10 @@ Euc_Ward_Den <- as.dendrogram(Clust_Ward)
 Euc_Ward_PrettyPlot <- dendrapply(Euc_Ward_Den, colLabW)
 plot(Euc_Ward_PrettyPlot, main = "Dendrogram, Euc. Distance, Ward Linkage", type = "triangle", horiz = T)
 
+#Additional info
+#Defaults to Phi coefficient for binary variables, which is fine.
+cor(CampaignCleaned[,-c(1, 19)], CampaignCleaned[,-c(1, 19)])
 
+#Heatmap of dissimilarities - see how the questions line up to clusters
+heatmap(MatrixNum)
 
