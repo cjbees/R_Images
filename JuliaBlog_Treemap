@@ -68,4 +68,6 @@ cor(CampaignCleaned[,-c(1, 19)], CampaignCleaned[,-c(1, 19)])
 
 #Heatmap of dissimilarities - see how the questions line up to clusters
 heatmap(MatrixNum)
+#Use Ward as you did for treemap
+heatmap(MatrixNum, hclustfun=function(d) hclust(d, method="ward"))
 
