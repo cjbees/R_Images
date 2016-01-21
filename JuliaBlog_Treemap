@@ -63,4 +63,5 @@ Euc_Ward_PrettyPlot <- dendrapply(Euc_Ward_Den, colLabW)
 plot(Euc_Ward_PrettyPlot, main = "Dendrogram, Euc. Distance, Ward Linkage", type = "triangle", horiz = T)
 
 
+#par(mar=c(5.1, 4.1, 4.1, 12.1))
 
