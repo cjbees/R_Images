@@ -1,0 +1,129 @@
+#setwd()
+
+
+
+#Load libraries
+
+library(cluster)
+
+
+
+#Read Campaign Data file into R locally
+
+#CampaignData <- read.csv("CampaignData.csv", header=TRUE, stringsAsFactors=FALSE)
+
+	head(CampaignData)
+
+	str(CampaignData)
+
+	names(CampaignData)
+
+
+
+#Select possibly-relevant binary variables
+
+CampaignCleaned <- CampaignData[,c(2, 3, 5, 6, 7, 9, 11, 13, 14, 16, 18, 20, 23, 25, 26, 27, 28, 30, 31, 32, 34, 43)]
+
+  #Change NA's to zero, because they should be 0 in this dataset
+
+  CampaignCleaned[is.na(CampaignCleaned)] <- 0
+
+  
+
+#Transform CampaignCleaned dataframe into a matrix
+
+Matrix <- as.matrix(CampaignCleaned[, -c(1, 19)], dimnames = list(CampaignCleaned[1,], CampaignCleaned[,1]))
+
+	str(Matrix)
+
+
+
+#Give the matrix row and column names	
+
+MatrixNamed <- as.matrix(CampaignCleaned[, -c(1, 19)])
+
+	row.names(MatrixNamed) = unlist(CampaignCleaned[1])
+
+	str(MatrixNamed)
+
+	
+
+#Make sure it's a numeric	matrix
+
+MatrixNum <- data.matrix(MatrixNamed)
+
+	str(MatrixNum)
+
+
+
+#Calculate dissimilarity metrics from the matrix of cleaned data		
+
+#Apply euclideam distance using daisy function
+
+Euc_Matrix <- daisy(MatrixNum, metric = "euclidean", type = list(symm =c(1:ncol(MatrixNum))))	
+
+
+
+#Ward's method
+
+#Pulling from above - Use chosen hierarchical clustering on the chosen dissimilarity matrix
+
+#Euc_Matrix <- daisy(MatrixNum, metric = "euclidean", type = list(symm =c(1:ncol(MatrixNum))))
+
+Clust_Ward <- hclust(Euc_Matrix, method = "ward.D2")
+
+
+
+#Make a new as.dendrogram  object
+
+Euc_Ward_Den <- as.dendrogram(Clust_Ward)
+
+	#Compare via text output in console
+
+	#str(Euc_Complete_Den)
+
+	str(Euc_Ward_Den)
+
+	
+
+	#Make cutree objectfrom the hclust object, above; decided on 4 groups from previous trials
+
+	CutWardH <- cutree(Clust_Ward, k=4)
+
+	
+
+			#Color function
+
+	  	# function to add color labels; adjust for name of cutree object
+
+      labelColors = c("#CDB380", "#036564", "#EB6841", "#EDC951")
+
+
+
+	colLabW <- function(n) {
+
+  	if (is.leaf(n)) {
+
+   	 a <- attributes(n)
+
+   	 labCol <- labelColors[CutWardH[which(names(CutWardH) == a$label)]]
+
+   	 attr(n, "nodePar") <- c(a$nodePar, lab.col = labCol)
+
+ 	   }
+
+ 	   n
+
+	}
+
+	
+
+#Plot pretty dendrogram - Ward version
+
+Euc_Ward_PrettyPlot <- dendrapply(Euc_Ward_Den, colLabW)
+
+plot(Euc_Ward_PrettyPlot, main = "Films Clustered By Campaign Attributes", type = "triangle", horiz = T, adj = 0)
+
+
+mar.default <- c(1,1,3,4) + 0.1
+par(mar = mar.default + c(0, 4, 0, 20)) 
